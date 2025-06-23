@@ -13,7 +13,8 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 load_dotenv()
 MODEL_DIR = os.getenv("MODEL_DIR")
 
-tokenizer = AutoTokenizer.from_pretrained(MODEL_DIR, use_fast=False)
+# Load tokenizer and model
+tokenizer = AutoTokenizer.from_pretrained(MODEL_DIR)
 model = AutoModelForSequenceClassification.from_pretrained(MODEL_DIR)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model.to(device)
