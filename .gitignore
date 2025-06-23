@@ -1,7 +1,3 @@
-# Ignore model directory
-cardiff_model/
-backend/cardiff_model/
-
 # Ignore environment variables
 .env
 
