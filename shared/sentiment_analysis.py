@@ -3,15 +3,13 @@ import torch
 import nltk
 import re
 import multiprocessing
-from dotenv import load_dotenv
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from nltk.corpus import stopwords
 from collections import Counter
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-# Load environment variables
-load_dotenv()
-MODEL_DIR = os.getenv("MODEL_DIR")
+# Direct model path (no more dotenv needed)
+MODEL_DIR = "cardiff_model"
 
 # Load tokenizer and model
 tokenizer = AutoTokenizer.from_pretrained(MODEL_DIR)
@@ -118,4 +116,3 @@ def categorize_words_by_sentiment(texts, sentiments):
             final[key] = [{"word": key.split("_")[0].capitalize() + " words are not available", "count": 0}]
     
     return final
-
