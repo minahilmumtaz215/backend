@@ -1,0 +1,20 @@
+# Ignore model directory
+cardiff_model/
+backend/cardiff_model/
+
+# Ignore environment variables
+.env
+
+# Bytecode & cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Jupyter Notebook checkpoints (if any)
+.ipynb_checkpoints/
+
+# OS/IDE files
+.DS_Store
+.vscode/
+.idea/
