@@ -11,8 +11,9 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 MODEL_DIR = "cardiffnlp/twitter-xlm-roberta-base-sentiment"
 
 # Load tokenizer and model
-tokenizer = AutoTokenizer.from_pretrained(MODEL_DIR)
+tokenizer = AutoTokenizer.from_pretrained(MODEL_DIR, use_fast=False)
 model = AutoModelForSequenceClassification.from_pretrained(MODEL_DIR)
+
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model.to(device)
 model.eval()
