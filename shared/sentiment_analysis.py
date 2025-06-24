@@ -2,16 +2,16 @@ import torch
 import nltk
 import re
 import multiprocessing
-from transformers import AutoTokenizer, AutoModelForSequenceClassification
+from transformers import XLMRobertaTokenizer, AutoModelForSequenceClassification
 from nltk.corpus import stopwords
 from collections import Counter
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-# Direct model name or local folder
+# Direct model name
 MODEL_DIR = "cardiffnlp/twitter-xlm-roberta-base-sentiment"
 
-# Load tokenizer and model
-tokenizer = AutoTokenizer.from_pretrained(MODEL_DIR, use_fast=False)
+# Use XLMRobertaTokenizer to avoid fast tokenizer issues
+tokenizer = XLMRobertaTokenizer.from_pretrained(MODEL_DIR)
 model = AutoModelForSequenceClassification.from_pretrained(MODEL_DIR)
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -88,7 +88,6 @@ def categorize_words_by_sentiment(texts, sentiments):
         if sentiment in word_sentiment_map:
             word_sentiment_map[sentiment].update(tokens)
 
-    # Reverse index: word → sentiment counts
     word_totals = Counter()
     word_to_sentiment_counts = {}
 
@@ -99,7 +98,6 @@ def categorize_words_by_sentiment(texts, sentiments):
                 word_to_sentiment_counts[word] = {"positive": 0, "neutral": 0, "negative": 0}
             word_to_sentiment_counts[word][sentiment] += count
 
-    # Keep only words where one sentiment dominates
     final = {"positive_words": [], "neutral_words": [], "negative_words": []}
     for word, sentiment_counts in word_to_sentiment_counts.items():
         dominant_sentiment = max(sentiment_counts, key=sentiment_counts.get)
@@ -109,7 +107,6 @@ def categorize_words_by_sentiment(texts, sentiments):
                 "count": sentiment_counts[dominant_sentiment]
             })
 
-    # Sort and limit to top 10
     for key in final:
         final[key] = sorted(final[key], key=lambda x: x["count"], reverse=True)[:10]
         if not final[key]:
