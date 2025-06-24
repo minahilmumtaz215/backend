@@ -1,4 +1,3 @@
-import os
 import torch
 import nltk
 import re
@@ -8,8 +7,8 @@ from nltk.corpus import stopwords
 from collections import Counter
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-# Direct model path (no more dotenv needed)
-MODEL_DIR = "cardiff_model"
+# Direct model name or local folder
+MODEL_DIR = "cardiffnlp/twitter-xlm-roberta-base-sentiment"
 
 # Load tokenizer and model
 tokenizer = AutoTokenizer.from_pretrained(MODEL_DIR)
@@ -21,7 +20,7 @@ model.eval()
 # Label mapping
 reverse_label_map = {0: "negative", 1: "neutral", 2: "positive"}
 
-# Stopwords
+# Download stopwords
 nltk.download("stopwords")
 ENGLISH_STOPWORDS = set(stopwords.words("english"))
 CUSTOM_STOPWORDS = set([

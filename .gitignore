@@ -1,16 +1,39 @@
-# Ignore environment variables
-.env
-
-# Bytecode & cache
+# Python
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
 
-# Jupyter Notebook checkpoints (if any)
+# Jupyter and IPython
 .ipynb_checkpoints/
+*.ipynb
 
-# OS/IDE files
-.DS_Store
+# Virtual environment
+venv/
+env/
+ENV/
+
+# dotenv files (DON'T PUSH SECRETS)
+.env
+.env.*
+
+# HuggingFace cache
+~/.cache/huggingface/
+
+# PyTorch model weights
+*.bin
+*.pt
+*.safetensors
+
+# Logs and outputs
+*.log
+*.out
+
+# VSCode
 .vscode/
-.idea/
+
+# Railway specific
+railway.json
