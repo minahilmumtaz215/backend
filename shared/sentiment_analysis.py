@@ -1,16 +1,12 @@
 import torch
 import nltk
 import re
-import multiprocessing
 from transformers import XLMRobertaTokenizer, AutoModelForSequenceClassification
 from nltk.corpus import stopwords
 from collections import Counter
-from concurrent.futures import ThreadPoolExecutor, as_completed
 
-# Direct model name
+# Model setup
 MODEL_DIR = "cardiffnlp/twitter-xlm-roberta-base-sentiment"
-
-# Use XLMRobertaTokenizer to avoid fast tokenizer issues
 tokenizer = XLMRobertaTokenizer.from_pretrained(MODEL_DIR)
 model = AutoModelForSequenceClassification.from_pretrained(MODEL_DIR)
 
@@ -21,7 +17,7 @@ model.eval()
 # Label mapping
 reverse_label_map = {0: "negative", 1: "neutral", 2: "positive"}
 
-# Download stopwords
+# Stopwords
 nltk.download("stopwords")
 ENGLISH_STOPWORDS = set(stopwords.words("english"))
 CUSTOM_STOPWORDS = set([
@@ -62,22 +58,17 @@ def batch_comments(texts, tokenizer, max_comments=64, max_tokens=512):
 def process_batch(batch):
     inputs = tokenizer(batch, return_tensors="pt", padding=True, truncation=True, max_length=512)
     inputs = {k: v.to(device) for k, v in inputs.items()}
-
     with torch.no_grad():
         outputs = model(**inputs)
         predictions = torch.argmax(outputs.logits, dim=1).tolist()
-
     return [reverse_label_map[pred] for pred in predictions]
 
+# ✅ Option 1: Sequential batch processing
 def analyze_sentiments(comments, max_comments_per_batch=64, max_tokens=480):
     batches = batch_comments(comments, tokenizer, max_comments_per_batch, max_tokens)
     all_sentiments = []
-
-    with ThreadPoolExecutor(max_workers=multiprocessing.cpu_count()) as executor:
-        futures = [executor.submit(process_batch, batch) for batch in batches]
-        for future in as_completed(futures):
-            all_sentiments.extend(future.result())
-
+    for batch in batches:
+        all_sentiments.extend(process_batch(batch))
     return all_sentiments
 
 def categorize_words_by_sentiment(texts, sentiments):
